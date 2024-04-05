@@ -15,16 +15,18 @@
 -->
 
 <launch>
-  <arg name="bag_filenames"/>
+  <arg name="bag_filenames" default="/home/mochizuki12/bags/2024-03-20-20-58-06.bag"/>
   <arg name="no_rviz" default="false"/>
   <arg name="rviz_config" default="$(find cartographer_ros)/configuration_files/demo_3d.rviz"/>
   <arg name="configuration_directory" default="$(find cartographer_ros)/configuration_files"/>
-  <arg name="configuration_basenames" default="backpack_3d.lua"/>
-  <arg name="urdf_filenames" default="$(find cartographer_ros)/urdf/backpack_3d.urdf"/>
+  <arg name="configuration_basenames" default="orne-box3_3d.lua"/>
+  <arg name="urdf_filenames" default="$(find cartographer_ros)/urdf/orne_box3.urdf"/>
   <arg name="launch_prefix" default=""/>
 
-  <remap from="points2_1" to="horizontal_laser_3d" />
-  <remap from="points2_2" to="vertical_laser_3d" />
+  <remap from="points2" to="/rfans/rfans_driver/surestar_points"/>
+  <remap from="imu" to="/imu_data"/>
+  <remap from="odom" to="odometry/filtered"/>
+
   <include file="$(find cartographer_ros)/launch/offline_node.launch">
     <arg name="bag_filenames" value="$(arg bag_filenames)"/>
     <arg name="no_rviz" value="$(arg no_rviz)"/>
@@ -34,4 +36,5 @@
     <arg name="urdf_filenames" value="$(arg urdf_filenames)"/>
     <arg name="launch_prefix" value="$(arg launch_prefix)"/>
   </include>
+
 </launch>

@@ -12,17 +12,33 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
-VOXEL_SIZE = 5e-2
+
+---------------------------------------------------
+--三次元測域センサでpcdの三次元地図を作成する設定--
+---------------------------------------------------
+
+
+VOXEL_SIZE = 0.05
 
 include "transform.lua"
 
 options = {
-  tracking_frame = "base_link",
+
+  --pbstream作成時に指定したtracking_frameと同じものを指定
+  tracking_frame = "imu_link",
+
+
   pipeline = {
     {
+      --地図書き出し時に使用する測距値の範囲を指定
       action = "min_max_range_filter",
       min_range = 1.,
-      max_range = 60.,
+      max_range = 80.,
+    },
+    {
+      --移動している物体の点群を削除 
+      action = "voxel_filter_and_remove_moving_objects",
+      voxel_size = 0.05,
     },
     {
       action = "dump_num_points",
@@ -65,20 +81,14 @@ options = {
     {
       action = "write_xray_image",
       voxel_size = VOXEL_SIZE,
-      filename = "xray_yz_all_color",
-      transform = YZ_TRANSFORM,
-    },
-    {
-      action = "write_xray_image",
-      voxel_size = VOXEL_SIZE,
       filename = "xray_xy_all_color",
       transform = XY_TRANSFORM,
     },
+
     {
-      action = "write_xray_image",
-      voxel_size = VOXEL_SIZE,
-      filename = "xray_xz_all_color",
-      transform = XZ_TRANSFORM,
+      --pcd形式で出力
+      action = "write_pcd",
+      filename = "points.pcd",
     },
   }
 }
